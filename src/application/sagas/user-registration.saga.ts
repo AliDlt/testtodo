@@ -7,12 +7,8 @@ export class UserRegistrationSaga {
     constructor(private readonly eventBus: EventBus) { }
 
     async handle(event: UserRegisteredEvent) {
-        console.log(`Saga handling user registration event for user ${event.username}`);
-
-        // Here, we can trigger other asynchronous processes
-        // For example, notifying an external service or sending a welcome email.
-
-        // Dispatch another event if necessary
-        // this.eventBus.publish(new AnotherEvent(...));
+        console.log(`Handling user registration event for ${event.username}`);
+        // انجام عملیات اضافی مثل ارسال ایمیل خوش‌آمدگویی
     }
 }
+

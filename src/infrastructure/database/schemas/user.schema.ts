@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { TodoList } from '../schemas/todo-list.schema';
 
 @Schema()
 export class User extends Document {
