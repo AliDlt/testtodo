@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserRepository } from '../../domain/repositories/user.repository';
-import { User } from '../../domain/entities/user.entity';
-import { USER_REPOSITORY } from '../../modules/user.module';
+import { UserRepository, USER_REPOSITORY } from 'src/domain/repositories/user.repository';
+import { User } from 'src/domain/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -11,11 +10,16 @@ export class UserService {
     ) { }
 
     async registerUser(username: string, password: string): Promise<User> {
-        const user = new User(null, username, password);
+        const id = this.generateUserId();
+        const user = new User(id, username, password);
         return this.userRepository.createUser(user);
     }
 
     async findUserByUsername(username: string): Promise<User | null> {
         return this.userRepository.findUserByUsername(username);
+    }
+
+    private generateUserId(): string {
+        return Math.random().toString(36).substring(2, 15);
     }
 }

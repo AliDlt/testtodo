@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TodoListRepository } from '../../domain/repositories/todo-list.repository';
+import { TodoListRepository, TODO_LIST_REPOSITORY } from '../../domain/repositories/todo-list.repository';
 import { TodoList } from '../../domain/entities/todo-list.entity';
 import { TodoItem } from '../../domain/entities/todo-item.entity';
-import { TODO_LIST_REPOSITORY } from '../../modules/todo-list.module';
 
 @Injectable()
 export class TodoListService {
@@ -41,7 +40,11 @@ export class TodoListService {
             'todoItems.$[item].priority': priority,
         };
 
-        const todoList = await this.todoListRepository.updateTodoList(todoListId, updateData);
+        const options = {
+            arrayFilters: [{ 'item._id': todoItemId }],
+        };
+
+        const todoList = await this.todoListRepository.updateTodoList(todoListId, updateData, options);
         return todoList;
     }
 }

@@ -1,22 +1,39 @@
+// user.mongo.repository.ts
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from 'src/domain/entities/user.entity';
-import { UserRepository } from 'src/domain/repositories/user.repository';
+import { Model, Document } from 'mongoose';
+import { User } from '../../../domain/entities/user.entity';
+import { UserRepository } from '../../../domain/repositories/user.repository';
+
+// Define Mongoose Document for User entity, omitting 'id' to avoid conflict with Mongoose Document
+interface UserDocument extends Omit<User, 'id'>, Document { }
 
 @Injectable()
 export class UserMongoRepository implements UserRepository {
     constructor(
-        @InjectModel('User') private readonly userModel: Model<User>,
+        @InjectModel('User') private readonly userModel: Model<UserDocument>,
     ) { }
+
+    // Helper function to convert Mongoose document to plain User object
+    private toUser(userDocument: UserDocument): User {
+        const { _id, username, password, todoLists } = userDocument;
+        return {
+            id: _id.toString(),
+            username,
+            password,
+            todoLists: todoLists || [],
+        };
+    }
 
     async createUser(user: User): Promise<User> {
         const createdUser = new this.userModel(user);
-        return await createdUser.save();
+        const savedUser = await createdUser.save();
+        return this.toUser(savedUser);
     }
 
     async findUserByUsername(username: string): Promise<User | null> {
-        return await this.userModel.findOne({ username }).exec();
+        const userDocument = await this.userModel.findOne({ username }).exec();
+        return userDocument ? this.toUser(userDocument) : null;
     }
 
     async validateUser(username: string, password: string): Promise<User | null> {

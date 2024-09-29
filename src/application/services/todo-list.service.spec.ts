@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodoListService } from '../services/todo-list.service';
-import { TodoListRepository } from '../../domain/repositories/todo-list.repository';
+import { TodoListRepository, TODO_LIST_REPOSITORY } from '../../domain/repositories/todo-list.repository';
 import { CreateTodoListCommand } from '../../application/commands/create-todo-list.command';
 import { TodoList } from '../../domain/entities/todo-list.entity';
 
@@ -23,7 +23,7 @@ describe('TodoListService', () => {
             providers: [
                 TodoListService,
                 {
-                    provide: 'TodoListRepository', // Fix the injection token here
+                    provide: TODO_LIST_REPOSITORY,
                     useValue: mockTodoListRepository,
                 },
             ],
