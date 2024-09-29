@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  todo-app:
+    build: .
+    container_name: todo-app
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+    environment:
+      - DATABASE_URL=mongodb://root:example@mongo:27017/todo-app?authSource=admin
+    volumes:
+      - .:/usr/src/app
+    command: npm run start:dev
